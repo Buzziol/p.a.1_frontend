@@ -1,0 +1,2 @@
+<template><div class='space-y-4'><BaseCard><h2 class='text-xl font-semibold'>Dashboard</h2><p>Usuário: {{ auth.user?.name || auth.user?.email }}</p><p>Perfil: {{ auth.role }}</p></BaseCard><div class='grid md:grid-cols-3 gap-4'><BaseCard>Pacientes (em breve)</BaseCard><BaseCard>Consultas (em breve)</BaseCard><BaseCard>Prontuários (em breve)</BaseCard></div></div></template>
+<script setup>import BaseCard from '../components/BaseCard.vue';import { useAuthStore } from '../stores/authStore';const auth=useAuthStore()</script>

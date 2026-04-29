@@ -1,0 +1,1 @@
+<template><div class='min-h-screen flex items-center justify-center'><div><h1 class='text-2xl font-semibold'>403</h1><p>Acesso negado.</p><router-link to='/dashboard' class='text-blue-600'>Voltar</router-link></div></div></template>

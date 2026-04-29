@@ -1,0 +1,5 @@
+<template><BaseCard><h2 class='text-xl mb-4'>Novo Paciente</h2><form class='grid md:grid-cols-2 gap-3' @submit.prevent='submit'><BaseInput v-for='f in fields' :key='f' v-model='form[f]' :placeholder='f'/><div class='md:col-span-2'><BaseButton>Salvar</BaseButton></div></form><p v-if='ok' class='text-emerald-600 mt-3'>Paciente criado com sucesso.</p><ErrorState v-if='error' :message='error'/></BaseCard></template>
+<script setup>import { reactive,ref } from 'vue';import { patientService } from '../services/patientService';import BaseCard from '../components/BaseCard.vue';import BaseInput from '../components/BaseInput.vue';import BaseButton from '../components/BaseButton.vue';import ErrorState from '../components/ErrorState.vue';
+const fields=['name','cpf','address','cep','phone','birth_date','blood_type','email','marital_status'];const form=reactive(Object.fromEntries(fields.map(f=>[f,''])));const ok=ref(false),error=ref('');
+const submit=async()=>{ok.value=false;error.value='';try{await patientService.create(form);ok.value=true}catch{error.value='Erro ao criar paciente'}}
+</script>

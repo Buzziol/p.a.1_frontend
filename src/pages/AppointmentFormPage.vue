@@ -1,0 +1,5 @@
+<template><BaseCard><h2 class='text-xl mb-4'>Nova consulta</h2><form class='space-y-3' @submit.prevent='submit'><BaseInput v-model='form.patient_id' placeholder='patient_id'/><BaseInput v-model='form.doctor_profile_id' placeholder='doctor_profile_id'/><BaseInput v-model='form.scheduled_at' placeholder='scheduled_at (ISO)'/><BaseButton>Criar</BaseButton></form><p v-if='ok' class='text-emerald-600 mt-2'>Consulta criada.</p><ErrorState v-if='error' :message='error'/></BaseCard></template>
+<script setup>import { reactive,ref } from 'vue';import { appointmentService } from '../services/appointmentService';import BaseCard from '../components/BaseCard.vue';import BaseInput from '../components/BaseInput.vue';import BaseButton from '../components/BaseButton.vue';import ErrorState from '../components/ErrorState.vue';
+const form=reactive({patient_id:'',doctor_profile_id:'',scheduled_at:''});const ok=ref(false),error=ref('');
+const submit=async()=>{ok.value=false;error.value='';try{await appointmentService.create(form);ok.value=true}catch{error.value='Erro ao criar consulta'}}
+</script>
