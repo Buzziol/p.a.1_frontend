@@ -1,5 +1,16 @@
 import api from './api'
+
 export const authService = {
-  login: (payload) => api.post('/auth/login', payload).then((r) => r.data),
-  me: () => api.get('/auth/me').then((r) => r.data),
+  login(credentials) {
+    console.log('LOGIN PAYLOAD:', credentials)
+    return api.post('/auth/login', credentials, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  },
+
+  me() {
+    return api.get('/auth/me')
+  }
 }

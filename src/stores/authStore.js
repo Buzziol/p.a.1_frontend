@@ -13,19 +13,27 @@ export const useAuthStore = defineStore('auth', {
     isAuthenticated: (state) => !!state.token,
   },
   actions: {
-    async login(credentials) {
+    async login(email, password) {
       this.loading = true
       try {
-        const data = await authService.login(credentials)
+        const response = await authService.login({
+          email: email,
+          password: password
+        })
+
+        const data = response.data
+
         this.token = data.access_token
-        localStorage.setItem('access_token', this.token)
+        localStorage.setItem('access_token', data.access_token)
+
         await this.fetchMe()
       } finally {
         this.loading = false
       }
     },
     async fetchMe() {
-      const me = await authService.me()
+      const response = await authService.me()
+      const me = response.data
       this.user = me
       this.role = me.role
       this.clinic = me.clinic || null
