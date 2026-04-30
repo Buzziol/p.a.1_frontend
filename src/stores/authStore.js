@@ -32,9 +32,10 @@ export const useAuthStore = defineStore('auth', {
     async fetchMe() {
       const response = await authService.me()
       const me = response.data
+
       this.user = me
-      this.role = me.role
-      this.clinic = me.clinic || null
+      this.role = me.role || me.user?.role
+      this.clinic = me.clinic || me.user?.clinic || null
     },
     logout() {
       this.token = ''
