@@ -2,31 +2,30 @@
   <BaseCard class="w-full max-w-md">
     <h2 class="text-xl mb-4">Login</h2>
     <form class="space-y-3" @submit.prevent="handleLogin">
-      <BaseInput v-model="email" type="email" placeholder="E-mail" />
-      <BaseInput v-model="password" type="password" placeholder="Senha" />
+      <BaseInput v-model="email" label="E-mail" type="email" />
+      <BaseInput v-model="password" label="Senha" type="password" />
       <ErrorState v-if="error" :message="error" />
-      <BaseButton type="submit" :disabled="loading">Entrar</BaseButton>
+      <button type="submit" class="px-4 py-2 rounded-xl bg-zinc-900 text-white disabled:opacity-50" :disabled="loading">Entrar</button>
     </form>
   </BaseCard>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
+import { useRouter } from 'vue-router'
 import BaseCard from '../components/BaseCard.vue'
 import BaseInput from '../components/BaseInput.vue'
-import BaseButton from '../components/BaseButton.vue'
 import ErrorState from '../components/ErrorState.vue'
 
 const email = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
-const router = useRouter()
 const authStore = useAuthStore()
+const router = useRouter()
 
-const handleLogin = async () => {
+async function handleLogin() {
   try {
     loading.value = true
     error.value = ''

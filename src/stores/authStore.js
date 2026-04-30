@@ -17,15 +17,13 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true
       try {
         const response = await authService.login({
-          email: email,
-          password: password
+          email,
+          password
         })
 
         const data = response.data
-
         this.token = data.access_token
         localStorage.setItem('access_token', data.access_token)
-
         await this.fetchMe()
       } finally {
         this.loading = false
