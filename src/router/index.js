@@ -24,9 +24,9 @@ const routes = [
     children: [
       { path: '', redirect: '/dashboard' },
       { path: 'dashboard', component: DashboardPage, meta: { roles: ['SUPER_ADMIN', 'CLINIC_ADMIN', 'DOCTOR', 'RECEPTIONIST'] } },
-      { path: 'patients', component: PatientsPage, meta: { roles: ['CLINIC_ADMIN', 'DOCTOR', 'RECEPTIONIST'] } },
+      { path: 'patients', component: PatientsPage, meta: { roles: ['SUPER_ADMIN', 'CLINIC_ADMIN', 'DOCTOR', 'RECEPTIONIST'] } },
       { path: 'patients/new', component: PatientFormPage, meta: { roles: ['CLINIC_ADMIN', 'RECEPTIONIST'] } },
-      { path: 'appointments', component: AppointmentsPage, meta: { roles: ['CLINIC_ADMIN', 'DOCTOR', 'RECEPTIONIST'] } },
+      { path: 'appointments', component: AppointmentsPage, meta: { roles: ['SUPER_ADMIN', 'CLINIC_ADMIN', 'DOCTOR', 'RECEPTIONIST'] } },
       { path: 'appointments/new', component: AppointmentFormPage, meta: { roles: ['CLINIC_ADMIN', 'RECEPTIONIST'] } },
       { path: 'medical-records/new', component: MedicalRecordFormPage, meta: { roles: ['CLINIC_ADMIN', 'DOCTOR'] } },
       { path: 'medical-records/:id', component: MedicalRecordDetailPage, meta: { roles: ['CLINIC_ADMIN', 'DOCTOR'] } },
