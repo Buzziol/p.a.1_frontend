@@ -38,13 +38,30 @@ const routes = [
 const router = createRouter({ history: createWebHistory(), routes })
 
 router.beforeEach(async (to) => {
-  const auth = useAuthStore()
-  if (auth.token && !auth.user) {
-    try { await auth.fetchMe() } catch { auth.logout() }
+  const authStore = useAuthStore()
+
+  if (to.path === '/login' || to.path === '/forbidden') {
+    return true
   }
-  if (to.meta.requiresAuth && !auth.isAuthenticated) return '/login'
-  if (to.path === '/login' && auth.isAuthenticated) return '/dashboard'
-  if (to.meta.roles && !auth.hasRole(to.meta.roles)) return '/forbidden'
+
+  if (authStore.token && !authStore.user) {
+    try {
+      await authStore.fetchMe()
+    } catch {
+      authStore.logout()
+      return '/login'
+    }
+  }
+
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) return '/login'
+
+  if (to.path === '/login' && authStore.isAuthenticated) return '/dashboard'
+
+  console.log('AUTH ROLE:', authStore.role, 'REQUIRED:', to.meta.roles)
+
+  if (to.meta.roles && !authStore.hasRole(to.meta.roles)) return '/forbidden'
+
+  return true
 })
 
 export default router
