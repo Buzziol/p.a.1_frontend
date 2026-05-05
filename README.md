@@ -1,77 +1,153 @@
-# AegisDerm
+# AegisDerm Frontend
 
-Este é o projeto frontend do **AegisDerm**, desenvolvido com **Vue.js 3**, **Vite** e **Tailwind CSS**.
+Frontend do sistema **AegisDerm** (TCC), desenvolvido com **Vue 3 + Vite + Tailwind + Axios**.
 
-## 📋 Pré-requisitos
+Este README foi preparado para facilitar a execução do projeto em **outras máquinas** (Windows, Linux e macOS).
 
-Antes de começar, certifique-se de ter o seguinte instalado em sua máquina:
+---
 
-*   **Node.js** (versão 18 ou superior recomendada)
-*   **npm** (gerenciador de pacotes padrão do Node)
+## 1- Requisitos
 
-## 🚀 Instalação
+Antes de executar, instale:
 
-Siga os passos abaixo para configurar o projeto localmente:
+- Node.js 18+ (recomendado: Node 20 LTS)
+- npm 9+
+- Git
 
-1.  **Clone o repositório** (caso ainda não tenha feito):
-    ```bash
-    git clone <URL_DO_REPOSITORIO>
-    cd aegisderm-front
-    ```
+Verifique versões:
 
-2.  **Instale as dependências**:
-    Na raiz do projeto (onde está o arquivo `package.json`), execute:
-    ```bash
-    npm install
-    ```
+node -v  
+npm -v  
+git --version  
 
-3.  **Configuração da API**:
-    Crie um arquivo `.env` na raiz do projeto e defina a URL da API (se diferente do padrão):
-    ```env
-    VITE_API_BASE_URL=http://localhost:5000/api/v1
-    ```
+---
 
-## 💻 Como Rodar o Projeto
+## 2- Clonar o projeto
 
-### Ambiente de Desenvolvimento
+git clone <URL_DO_REPOSITORIO>  
+cd p.a.1_frontend  
 
-Para iniciar o servidor de desenvolvimento com *Hot Module Replacement (HMR)*:
+> Se o nome da pasta local for diferente, use o nome correto no cd.
 
-```bash
-npm run dev
-```
+---
 
-O terminal exibirá o endereço local (geralmente `http://localhost:5173`) para você acessar a aplicação no navegador.
+## 3- Instalar dependências
 
-### Build de Produção
+npm install  
 
-Para gerar os arquivos otimizados para produção:
+Se houver erro de cache, tente:
 
-```bash
-npm run build
-```
+npm cache clean --force  
+npm install  
 
-Os arquivos gerados estarão na pasta `dist/`.
+---
 
-### Visualizar Build (Preview)
+## 4- Configurar variáveis de ambiente
 
-Para testar localmente a versão de produção gerada:
+Crie um arquivo `.env` na raiz do projeto:
 
-```bash
-npm run preview
-```
+VITE_API_BASE_URL=http://localhost:5000/api/v1  
 
-## 🛠️ Tecnologias Utilizadas
+Observação importante:
 
-*   [Vue.js 3](https://vuejs.org/) - Framework JavaScript Progressivo
-*   [Vite](https://vitejs.dev/) - Build tool rápida para desenvolvimento web moderno
-*   [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utility-first
-*   [PostCSS](https://postcss.org/) & [Autoprefixer](https://github.com/postcss/autoprefixer) - Processamento de CSS
+- O frontend depende do backend Flask rodando localmente nessa URL.
+- Se o backend estiver em outro host/porta, ajuste VITE_API_BASE_URL.
 
-## 📂 Estrutura de Pastas
+---
 
-*   `src/` - Código fonte da aplicação
-*   `public/` - Arquivos estáticos
-*   `index.html` - Ponto de entrada da aplicação
-*   `vite.config.js` - Configuração do Vite
-*   `tailwind.config.cjs` - Configuração do Tailwind CSS
+## 5- Rodar em desenvolvimento
+
+npm run dev  
+
+Acesse no navegador a URL mostrada no terminal (normalmente http://localhost:5173).
+
+---
+
+## 6- Build e preview (produção local)
+
+Build:
+
+npm run build  
+
+Gera os arquivos em dist/.
+
+Preview:
+
+npm run preview  
+
+---
+
+## 7- Fluxo básico de teste manual
+
+1. Abra /login  
+2. Faça login com usuário seedado do backend  
+3. Verifique redirecionamento para /dashboard  
+4. Navegue por pacientes/agenda conforme o perfil  
+
+Usuários de teste:
+
+superadmin@dermato.local / Admin123!  
+admin@dermato.local / Admin123!  
+medico@dermato.local / Admin123!  
+recepcao@dermato.local / Admin123!  
+
+---
+
+## 8- Problemas comuns
+
+### 8.1 npm install falha
+
+Verifique internet/proxy corporativo  
+Verifique permissão no registry npm  
+
+Tente:
+
+rm -rf node_modules package-lock.json  
+npm install  
+
+---
+
+### 8.2 Erro de CORS no login/API
+
+Confirme backend ativo em http://localhost:5000  
+Confirme VITE_API_BASE_URL correta  
+Reinicie o frontend após alterar .env  
+
+---
+
+### 8.3 Login retorna 401/403
+
+Verifique credenciais  
+Limpe localStorage no navegador  
+Faça novo login  
+
+---
+
+## 9- Stack do projeto
+
+Vue 3  
+Vite  
+Tailwind CSS  
+Axios  
+Pinia  
+Vue Router  
+
+---
+
+## 10- Estrutura principal
+
+src/ → código fonte  
+src/pages/ → páginas  
+src/components/ → componentes  
+src/services/ → API  
+src/stores/ → estado global  
+src/router/ → rotas  
+docs/ → documentação  
+
+---
+
+## 11- Comandos úteis
+
+npm run dev       → desenvolvimento  
+npm run build     → build  
+npm run preview   → preview  
