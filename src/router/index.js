@@ -7,15 +7,23 @@ import LoginPage from '../pages/LoginPage.vue'
 import DashboardPage from '../pages/DashboardPage.vue'
 import PatientsPage from '../pages/PatientsPage.vue'
 import PatientFormPage from '../pages/PatientFormPage.vue'
+import PatientEditPage from '../pages/PatientEditPage.vue'
 import AppointmentsPage from '../pages/AppointmentsPage.vue'
 import AppointmentFormPage from '../pages/AppointmentFormPage.vue'
 import MedicalRecordFormPage from '../pages/MedicalRecordFormPage.vue'
 import MedicalRecordDetailPage from '../pages/MedicalRecordDetailPage.vue'
 import MedicalRecordAIPage from '../pages/MedicalRecordAIPage.vue'
+import AdminUsersPage from '../pages/AdminUsersPage.vue'
+import AdminClinicsPage from '../pages/AdminClinicsPage.vue'
+import AuditLogsPage from '../pages/AuditLogsPage.vue'
 import ForbiddenPage from '../pages/ForbiddenPage.vue'
 
 const routes = [
-  { path: '/login', component: AuthLayout, children: [{ path: '', component: LoginPage }] },
+  {
+    path: '/login',
+    component: AuthLayout,
+    children: [{ path: '', component: LoginPage }],
+  },
   { path: '/forbidden', component: ForbiddenPage },
   {
     path: '/',
@@ -26,11 +34,15 @@ const routes = [
       { path: 'dashboard', component: DashboardPage, meta: { roles: ['SUPER_ADMIN', 'CLINIC_ADMIN', 'DOCTOR', 'RECEPTIONIST'] } },
       { path: 'patients', component: PatientsPage, meta: { roles: ['SUPER_ADMIN', 'CLINIC_ADMIN', 'DOCTOR', 'RECEPTIONIST'] } },
       { path: 'patients/new', component: PatientFormPage, meta: { roles: ['CLINIC_ADMIN', 'RECEPTIONIST'] } },
+      { path: 'patients/:id/edit', component: PatientEditPage, meta: { roles: ['CLINIC_ADMIN', 'RECEPTIONIST'] } },
       { path: 'appointments', component: AppointmentsPage, meta: { roles: ['SUPER_ADMIN', 'CLINIC_ADMIN', 'DOCTOR', 'RECEPTIONIST'] } },
       { path: 'appointments/new', component: AppointmentFormPage, meta: { roles: ['CLINIC_ADMIN', 'RECEPTIONIST'] } },
       { path: 'medical-records/new', component: MedicalRecordFormPage, meta: { roles: ['CLINIC_ADMIN', 'DOCTOR'] } },
       { path: 'medical-records/:id', component: MedicalRecordDetailPage, meta: { roles: ['CLINIC_ADMIN', 'DOCTOR'] } },
       { path: 'medical-records/:id/ai', component: MedicalRecordAIPage, meta: { roles: ['CLINIC_ADMIN', 'DOCTOR'] } },
+      { path: 'admin/users', component: AdminUsersPage, meta: { roles: ['SUPER_ADMIN', 'CLINIC_ADMIN'] } },
+      { path: 'admin/clinics', component: AdminClinicsPage, meta: { roles: ['SUPER_ADMIN'] } },
+      { path: 'admin/audit-logs', component: AuditLogsPage, meta: { roles: ['SUPER_ADMIN', 'CLINIC_ADMIN'] } },
     ],
   },
 ]
@@ -40,10 +52,13 @@ const router = createRouter({ history: createWebHistory(), routes })
 router.beforeEach(async (to) => {
   const authStore = useAuthStore()
 
+  // Rotas públicas
   if (to.path === '/login' || to.path === '/forbidden') {
+    if (to.path === '/login' && authStore.isAuthenticated) return '/dashboard'
     return true
   }
 
+  // Recuperar sessão se token existe mas user não foi carregado
   if (authStore.token && !authStore.user) {
     try {
       await authStore.fetchMe()
@@ -53,12 +68,10 @@ router.beforeEach(async (to) => {
     }
   }
 
+  // Auth guard
   if (to.meta.requiresAuth && !authStore.isAuthenticated) return '/login'
 
-  if (to.path === '/login' && authStore.isAuthenticated) return '/dashboard'
-
-  console.log('AUTH ROLE:', authStore.role, 'REQUIRED:', to.meta.roles)
-
+  // Role guard
   if (to.meta.roles && !authStore.hasRole(to.meta.roles)) return '/forbidden'
 
   return true
