@@ -1,16 +1,17 @@
 <template>
-  <BaseCard title="Novo Paciente">
+  <LoadingState v-if="loadingData" />
+  <BaseCard v-else title="Editar Paciente">
     <form class="grid md:grid-cols-2 gap-4" @submit.prevent="submit">
-      <BaseInput v-model="form.name" label="Nome completo" required placeholder="João da Silva" />
-      <BaseInput v-model="form.cpf" label="CPF" required placeholder="000.000.000-00" maxlength="14" @input="maskCpf" />
-      <BaseInput v-model="form.email" label="E-mail" required type="email" placeholder="joao@email.com" />
-      <BaseInput v-model="form.phone" label="Telefone" required placeholder="(00) 00000-0000" maxlength="15" @input="maskPhone" />
+      <BaseInput v-model="form.name" label="Nome completo" required />
+      <BaseInput :modelValue="form.cpf" label="CPF" disabled />
+      <BaseInput v-model="form.email" label="E-mail" required type="email" />
+      <BaseInput v-model="form.phone" label="Telefone" required />
       <BaseInput v-model="form.birth_date" label="Data de nascimento" required type="date" />
       <BaseSelect v-model="form.blood_type" label="Tipo sanguíneo" required>
         <option v-for="t in bloodTypes" :key="t" :value="t">{{ t }}</option>
       </BaseSelect>
-      <BaseInput v-model="form.address" label="Endereço" required placeholder="Rua, número, bairro" />
-      <BaseInput v-model="form.cep" label="CEP" required placeholder="00000-000" maxlength="9" @input="maskCep" />
+      <BaseInput v-model="form.address" label="Endereço" required />
+      <BaseInput v-model="form.cep" label="CEP" required />
       <BaseSelect v-model="form.marital_status" label="Estado civil" required>
         <option v-for="s in maritalStatuses" :key="s" :value="s">{{ s }}</option>
       </BaseSelect>
@@ -19,23 +20,26 @@
         <BaseButton variant="secondary" type="button" @click="$router.push('/patients')">Cancelar</BaseButton>
       </div>
     </form>
-    <p v-if="success" class="text-emerald-600 mt-4 text-sm">Paciente criado com sucesso!</p>
+    <p v-if="success" class="text-emerald-600 mt-4 text-sm">Paciente atualizado!</p>
     <ErrorState v-if="error" :message="error" />
   </BaseCard>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { patientService } from '../services/patientService'
 import BaseCard from '../components/BaseCard.vue'
 import BaseInput from '../components/BaseInput.vue'
 import BaseSelect from '../components/BaseSelect.vue'
 import BaseButton from '../components/BaseButton.vue'
 import ErrorState from '../components/ErrorState.vue'
+import LoadingState from '../components/LoadingState.vue'
 
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 const maritalStatuses = ['Solteiro(a)', 'Casado(a)', 'Divorciado(a)', 'Viúvo(a)', 'União Estável']
 
+const route = useRoute()
 const form = reactive({
   name: '', cpf: '', address: '', cep: '', phone: '',
   birth_date: '', blood_type: '', email: '', marital_status: '',
@@ -43,38 +47,28 @@ const form = reactive({
 const success = ref(false)
 const error = ref('')
 const loading = ref(false)
+const loadingData = ref(true)
 
-function maskCpf() {
-  let v = form.cpf.replace(/\D/g, '').slice(0, 11)
-  if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4')
-  else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3')
-  else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2')
-  form.cpf = v
-}
-
-function maskPhone() {
-  let v = form.phone.replace(/\D/g, '').slice(0, 11)
-  if (v.length > 6) v = v.replace(/(\d{2})(\d{5})(\d{1,4})/, '($1) $2-$3')
-  else if (v.length > 2) v = v.replace(/(\d{2})(\d{1,5})/, '($1) $2')
-  form.phone = v
-}
-
-function maskCep() {
-  let v = form.cep.replace(/\D/g, '').slice(0, 8)
-  if (v.length > 5) v = v.replace(/(\d{5})(\d{1,3})/, '$1-$2')
-  form.cep = v
-}
+onMounted(async () => {
+  try {
+    const p = await patientService.getById(route.params.id)
+    Object.assign(form, p)
+  } catch {
+    error.value = 'Erro ao carregar paciente'
+  } finally {
+    loadingData.value = false
+  }
+})
 
 const submit = async () => {
   loading.value = true
   success.value = false
   error.value = ''
   try {
-    await patientService.create(form)
+    await patientService.update(route.params.id, form)
     success.value = true
-    Object.keys(form).forEach((k) => (form[k] = ''))
   } catch (e) {
-    error.value = e?.response?.data?.error || 'Erro ao criar paciente'
+    error.value = e?.response?.data?.error || 'Erro ao atualizar paciente'
   } finally {
     loading.value = false
   }

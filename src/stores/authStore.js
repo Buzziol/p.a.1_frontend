@@ -14,29 +14,21 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     async login(email, password) {
-  const response = await authService.login({
-    email,
-    password
-  })
-
-  const data = response.data
-  this.token = data.access_token
-  localStorage.setItem('access_token', data.access_token)
-
-  await this.fetchMe()
-  },
+      const response = await authService.login({ email, password })
+      const data = response.data
+      this.token = data.access_token
+      localStorage.setItem('access_token', data.access_token)
+      await this.fetchMe()
+    },
     async fetchMe() {
       const response = await authService.me()
       const me = response.data
-
       this.user = me.user || me
       this.role = me.role || me.user?.role
       this.clinic = me.clinic || me.user?.clinic || null
-
-      console.log('AUTH ME:', me)
-      console.log('AUTH ROLE:', this.role)
     },
     logout() {
+      authService.logout().catch(() => {})
       this.token = ''
       this.user = null
       this.role = null
